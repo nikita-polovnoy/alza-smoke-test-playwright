@@ -1,36 +1,20 @@
-# 🛒 E-commerce Smoke Test (Alza.cz)
-[![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/downloads/)
-[![Playwright](https://img.shields.io/badge/framework-Playwright-green.svg)](https://playwright.dev/python/)
+# Playwright Automation Project: Alza.cz Critical Path
 
-## 📝 Project Overview
-This repository contains an automated **Smoke Test** for the Czech e-commerce giant **Alza.cz**. 
-The automation focuses on the **Critical Path** — the most essential sequence of steps a user takes to generate revenue for the business.
+This repository contains automated E-commerce tests for the **Alza.cz** website (Czech Republic's leading retailer). The project focuses on the critical path: searching for products and verifying the shopping cart flow.
 
-### Why this test?
-In a real-world scenario, if a user cannot search for a product or add it to the basket, the business loses money immediately. This test ensures that the core components (Search engine, Product Grid, and Shopping Cart) are functioning correctly.
+## 🛠 Tech Stack
+* **Language:** Python 3.13
+* **Framework:** Pytest
+* **Automation Library:** Playwright
+* **Reporting:** Screenshots & Terminal Verbose Logs
 
----
+## 🚀 Key Features & Solved Challenges
+* **Dynamic Data (Parametrization):** Tests run for multiple products (iPhone 15, Samsung Galaxy S24) using a single test function.
+* **Smart Modal Handling:** Implemented logic to handle Alza's specific "Upsell/Service" modals and cookie banners.
+* **Stability Fixes:** Used robust locators (`get_by_text`) and auto-waiting mechanisms to prevent flaky results.
+* **Clean Architecture:** Professional `.gitignore` setup and organized screenshot reporting.
 
-## 🚀 Scenarios Covered
-- **Navigation**: Loading the homepage and handling localized cookie consent.
-- **Search Logic**: Finding a specific product (e.g., "iPhone 15").
-- **Cart Management**: Adding the first available item to the basket.
-- **Verification**: Asserting that the product is present in the cart.
-- **Visual Proof**: Automated screenshot generation on test completion.
-
----
-
-## 🛠️ Technical Stack
-* **Language**: Python 3.13+
-* **Testing Framework**: `pytest`
-* **Automation Library**: `Playwright`
-* **Reporting**: Automated screenshots for manual verification.
-
----
-
-## ⚙️ Installation & Execution
-
-1. **Clone the repository**:
+## 📦 Installation & Setup
+1. Clone the repo:
    ```bash
-   git clone <your-repo-link>
-   cd alza-test
+   git clone [https://github.com/nikita-polovnoy/alza-smoke-test-playwright.git](https://github.com/nikita-polovnoy/alza-smoke-test-playwright.git)
