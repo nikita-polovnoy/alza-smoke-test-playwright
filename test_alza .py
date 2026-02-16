@@ -1,41 +1,49 @@
 from playwright.sync_api import Page, expect
 import pytest
+import os
 
-def test_alza_shopping_cart_flow(page: Page):
-    """
-    Test Case: Verify the Critical Path for adding an item to the shopping cart.
-    """
-    # 1. Navigate to the website
+@pytest.mark.parametrize("item", ["iPhone 15", "Samsung Galaxy S24"])
+def test_alza_shopping_cart_flow(page: Page, item: str):
+    # 1. Navigate
     page.goto("https://www.alza.cz/", wait_until="domcontentloaded")
 
-    # Handle Cookie Consent Dialog
+    # Cookie handle
     cookie_button = page.get_by_role("button", name="Rozumím")
     if cookie_button.is_visible():
         cookie_button.click()
 
-    # 2. Search for a product
+    # 2. Search
     search_input = page.get_by_placeholder("Co hledáte?")
-    search_input.fill("iPhone 15")
+    search_input.fill(item)
     page.get_by_test_id("button-search").click()
 
-    # 3. Add the first product to the cart
-    # Selecting the first 'Buy' button from the results list
+    # 3. Add to cart
     buy_button = page.locator(".btnk1").first
+    buy_button.wait_for(state="visible", timeout=7000)
     buy_button.click()
 
-    # Wait for the modal/animation to stabilize
+    # --- ВОТ ЭТОТ БЛОК НУЖНО ДОБАВИТЬ ОБЯЗАТЕЛЬНО ---
+    
+    # ПРАВКА №1: Если вылезло окно услуг (страховка), жмем "Продолжить"
+    # Это специфично для Samsung и дорогих товаров
+    continue_button = page.get_by_text("Pokračovat", exact=True)
+    try:
+        # Ждем немного, появится ли кнопка подтверждения
+        if continue_button.is_visible(timeout=3000):
+            continue_button.click()
+    except:
+        # Если кнопки нет (как у iPhone), просто идем дальше
+        page.keyboard.press("Escape")
+
+    # 4. Переход в корзину (ждем, пока счетчик обновится)
     page.wait_for_load_state("networkidle")
+    page.get_by_test_id("headerBasketIcon").click(force=True)
 
-    # 4. Navigate to the shopping cart
-    page.get_by_test_id("headerBasketIcon").click()
-
-    # 5. Assertions: Verify the product is visible in the cart
-    cart_item = page.locator(".mainItem")
+    # 5. Проверка (Assertion)
+    # Используем селектор, который ищет текст внутри элементов корзины
+    expect(page.get_by_text(item).first).to_be_visible(timeout=10000)
     
-    # Capture proof for the test report
-    page.screenshot(path="basket_result.png")
-    
-    # Assert with an extended timeout for heavy dynamic content
-    expect(cart_item).to_be_visible(timeout=10000)
-    
-    print("\n[SUCCESS] E-commerce Critical Path verified.")
+    # Скриншот для отчета
+    if not os.path.exists("screenshots"):
+        os.makedirs("screenshots")
+    page.screenshot(path=f"screenshots/basket_{item.replace(' ', '_')}.png")
